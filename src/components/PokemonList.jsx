@@ -1,40 +1,73 @@
 import React from 'react';
-import { useQuery } from 'react-query';
-import { useNavigate } from 'react-router-dom';
+import { useInfiniteQuery, useQuery } from 'react-query';
+import InfiniteScroll from 'react-infinite-scroller';
+import { fetchInfinitePokemons, fetchRandomPokemon } from '../api/pokemon';
+import PokemonCard from './PokemonCard';
+import { SimpleGrid, Flex, useBreakpointValue, Heading, Box } from '@chakra-ui/react';
+import PokemonCardLage from './PokemonCardLarge';
 
-function PokemonList() {
-  const pokemonQuery = useQuery({
+const PokemonList = () => {
+  const { data, isLoading, isError, fetchNextPage, hasNextPage } = useInfiniteQuery({
     queryKey: 'pokemon',
-    queryFn: () => fetch('https://pokeapi.co/api/v2/pokemon').then((res) => res.json())
+    getNextPageParam: (lastPage) => lastPage.pageParam,
+    queryFn: fetchInfinitePokemons
   });
-  const navigate = useNavigate();
 
-  console.log(pokemonQuery.data, pokemonQuery.isLoading, pokemonQuery.isError);
+  // get random pokemon using react-query
+  const randomPokemonQuery = useQuery('pokemonHeader', fetchRandomPokemon);
 
-  if (pokemonQuery.isLoading) {
+  const gridColumnCount = useBreakpointValue({ base: 1, md: 2 }); // Atur jumlah kolom sesuai kebutuhan
+
+  if (randomPokemonQuery.isLoading) {
     return <h1>Loading...</h1>;
   }
 
-  if (pokemonQuery.isError) {
+  if (randomPokemonQuery.isError) {
+    return <h1>Error</h1>;
+  }
+
+  if (isLoading) {
+    return <h1>Loading...</h1>;
+  }
+
+  if (isError) {
     return <h1>Error</h1>;
   }
 
   return (
-    <div>
-      <h1>Pokemon List</h1>
-      {pokemonQuery.data.results.map((pokemon, index) => (
-        <div key={index}>
-          <button
-            onClick={() => {
-              navigate(`/pokemon/${pokemon.name}`);
-            }}>
-            {pokemon.name}
-          </button>
-          <hr />
-        </div>
-      ))}
-    </div>
+    <Flex flexDir={'column'} marginY={2}>
+      <Box display={'flex'} padding={10} style={{ fontSize: '24px' }}>
+        <Heading>Destaque</Heading>
+      </Box>
+      <Flex justifyContent={'center'} padding={10} my={-10} fontSize={'16px'}>
+        <PokemonCardLage
+          name={randomPokemonQuery.data.name}
+          description={randomPokemonQuery.data.flavor_text_entries[0]}
+          id={randomPokemonQuery.data.id}
+        />
+      </Flex>
+
+      <Box display={'flex'} padding={10} style={{ fontSize: '24px' }}>
+        <Heading>Pokemons</Heading>
+      </Box>
+      <Flex justifyContent={'center'}>
+        <InfiniteScroll
+          loadMore={fetchNextPage}
+          hasMore={hasNextPage}
+          loader={<h4 key="loader">...Loading</h4>}>
+          <SimpleGrid
+            columns={gridColumnCount === 1 ? 2 : 4}
+            spacing={gridColumnCount === 1 ? 5 : 10}>
+            {data.pages.map((page) =>
+              page.pokemons.map(({ name, url }, index) => (
+                <PokemonCard key={index} name={name} url={url} fav />
+              ))
+            )}
+          </SimpleGrid>
+        </InfiniteScroll>
+      </Flex>
+    </Flex>
   );
-}
+};
 
 export default PokemonList;
