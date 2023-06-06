@@ -12,8 +12,16 @@
     "format": "prettier --write './**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc"
   },
   "dependencies": {
+    "@chakra-ui/react": "^2.7.0",
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "@reduxjs/toolkit": "^1.9.3",
+    "firebase": "^9.22.1",
+    "framer-motion": "^10.12.16",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-query": "^3.39.3",
+    "react-router-dom": "^6.10.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.37",
