@@ -2,8 +2,8 @@ import React from 'react';
 import { useQuery } from 'react-query';
 import { useParams, useNavigate } from 'react-router-dom';
 import PokemonCardLageDetail from './PokemonCardLargeDetail';
-import { Flex, Box, Heading, Progress, Text, Button } from '@chakra-ui/react';
-import { IoArrowBack } from 'react-icons/io5';
+import { Flex, Box, Heading, Progress, Text, IconButton, ButtonGroup } from '@chakra-ui/react';
+import { IoIosArrowBack } from 'react-icons/io';
 
 function PokemonDetail() {
   const { name } = useParams();
@@ -38,9 +38,24 @@ function PokemonDetail() {
 
   return (
     <Flex flexDir={'column'} mx={10} my={10}>
-      <Button onClick={() => navigate(-1)} mb={4} leftIcon={<IoArrowBack />}>
-        {name}
-      </Button>
+      <ButtonGroup>
+        <IconButton
+          onClick={() => navigate(-1)}
+          mb={4}
+          icon={<IoIosArrowBack color="black" />}
+          variant="outline"
+          size="sm"
+          colorScheme="blue"
+          _hover={{ bg: 'white' }}
+          justifyContent="flex-start"
+          textAlign="left"
+          alignItems="center"
+          width="fit-content"
+          borderColor="transparent"
+          paddingLeft={0}
+        />
+        <Text pt={1}>{name}</Text>
+      </ButtonGroup>
       {pokemonQuery.data && (
         <PokemonCardLageDetail
           name={pokemonQuery.data.name}
