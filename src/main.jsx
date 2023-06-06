@@ -4,7 +4,7 @@ import { ChakraProvider } from '@chakra-ui/react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
-import PokemonList from './components/PokemonList';
+import PokemonList from './routes/PokemonList';
 import PokemonDetail from './components/PokemonDetail';
 
 const router = createBrowserRouter([

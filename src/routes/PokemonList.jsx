@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useInfiniteQuery, useQuery } from 'react-query';
 import InfiniteScroll from 'react-infinite-scroller';
 import { fetchInfinitePokemons, fetchRandomPokemon } from '../api/pokemon';
-import PokemonCard from './PokemonCard';
+import PokemonCard from '../components/PokemonCard';
 import { SimpleGrid, Flex, useBreakpointValue, Heading, Box } from '@chakra-ui/react';
-import PokemonCardLage from './PokemonCardLarge';
+import PokemonCardLage from '../components/PokemonCardLarge';
+import { FaArrowUp } from 'react-icons/fa';
 
 const PokemonList = () => {
   const { data, isLoading, isError, fetchNextPage, hasNextPage } = useInfiniteQuery({
@@ -17,6 +18,30 @@ const PokemonList = () => {
   const randomPokemonQuery = useQuery('pokemonHeader', fetchRandomPokemon);
 
   const gridColumnCount = useBreakpointValue({ base: 1, md: 2 }); // Atur jumlah kolom sesuai kebutuhan
+
+  const [showScrollButton, setShowScrollButton] = useState(false);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+
+  const handleScroll = () => {
+    if (window.pageYOffset > 200) {
+      setShowScrollButton(true);
+    } else {
+      setShowScrollButton(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   if (randomPokemonQuery.isLoading) {
     return <h1>Loading...</h1>;
@@ -66,6 +91,21 @@ const PokemonList = () => {
           </SimpleGrid>
         </InfiniteScroll>
       </Flex>
+      {showScrollButton && (
+        <Box
+          position="fixed"
+          bottom={8}
+          right={8}
+          onClick={scrollToTop}
+          p={2}
+          borderRadius="full"
+          bgColor="gray.800"
+          color="white"
+          cursor="pointer"
+          zIndex={2}>
+          <FaArrowUp />
+        </Box>
+      )}
     </Flex>
   );
 };
