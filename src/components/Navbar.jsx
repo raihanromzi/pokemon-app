@@ -1,10 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Box, Flex, IconButton, Text } from '@chakra-ui/react';
+import { Box, Flex, IconButton, Text, Badge } from '@chakra-ui/react';
 import { MdCatchingPokemon } from 'react-icons/md';
 import { BsFillBookmarkFill } from 'react-icons/bs';
+import { useSelector } from 'react-redux';
 
 function Navbar() {
+  const favorite = useSelector((state) => {
+    return state.favorite;
+  });
+
+  const favCount = favorite.favorites.length;
+
   return (
     <Flex
       px={4}
@@ -56,6 +63,11 @@ function Navbar() {
             />
             <Text color={'white'} fontSize="xs">
               Favorite
+              <Box position="absolute" top="10px" right="70px" transform="translate(50%, -50%)">
+                <Badge colorScheme="red" variant="solid">
+                  {favCount}
+                </Badge>
+              </Box>
             </Text>
           </Flex>
         </Link>
