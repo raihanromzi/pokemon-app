@@ -12,6 +12,10 @@ import { store } from './redux/store';
 
 const router = createBrowserRouter([
   {
+    path: '/',
+    element: <PokemonList />
+  },
+  {
     path: '/pokemon',
     element: <PokemonList />
   },
