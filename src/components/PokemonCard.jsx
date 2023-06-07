@@ -2,10 +2,13 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Text, Image, ButtonGroup, Button, Flex, Icon } from '@chakra-ui/react';
 import { FaHeart, FaInfoCircle } from 'react-icons/fa';
-import { useQuery } from 'react-query';
+import { useDispatch } from 'react-redux';
+import { addFavorite } from '../redux/favoriteSlice';
 
 const PokemonCard = ({ name, url }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const [pokemon, setPokemon] = useState({
     name: '',
     url: '',
@@ -18,6 +21,17 @@ const PokemonCard = ({ name, url }) => {
     let imageUrl = `${'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world'}/${index}.svg`;
     setPokemon({ name, url, index, imageUrl });
   }, [name, url]);
+
+  const handleFavoriteAdd = (pokemon) => {
+    dispatch(
+      addFavorite({
+        name: pokemon.name,
+        url: pokemon.url,
+        imageUrl: pokemon.imageUrl,
+        id: pokemon.index
+      })
+    );
+  };
 
   return (
     <Flex justifyItems={'center'} alignItems={'center'} justifyContent={'center'}>
@@ -52,7 +66,12 @@ const PokemonCard = ({ name, url }) => {
                 transform: 'scale(1.50)',
                 transition: 'transform 0.15s ease-in'
               }}>
-              <Icon as={FaHeart} color={'white'} boxSize={4} />
+              <Icon
+                as={FaHeart}
+                color={'white'}
+                boxSize={4}
+                onClick={() => handleFavoriteAdd(pokemon)}
+              />
             </Button>
             <Button
               bg={'#263C66'}

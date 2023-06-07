@@ -2,7 +2,16 @@ import React from 'react';
 import { useQuery } from 'react-query';
 import { useParams, useNavigate } from 'react-router-dom';
 import PokemonCardLageDetail from './PokemonCardLargeDetail';
-import { Flex, Box, Heading, Progress, Text, IconButton, ButtonGroup } from '@chakra-ui/react';
+import {
+  Flex,
+  Box,
+  Heading,
+  Progress,
+  Text,
+  IconButton,
+  ButtonGroup,
+  Skeleton
+} from '@chakra-ui/react';
 import { IoIosArrowBack } from 'react-icons/io';
 
 function PokemonDetail() {
@@ -21,7 +30,7 @@ function PokemonDetail() {
   });
 
   if (pokemonQuery.isLoading) {
-    return <h1>Loading...</h1>;
+    return <Skeleton height="20px" width="20px" />;
   }
 
   if (pokemonQuery.isError) {
@@ -29,7 +38,7 @@ function PokemonDetail() {
   }
 
   if (statPokemonQuery.isLoading) {
-    return <h1>Loading...</h1>;
+    return <Skeleton height="20px" width="20px" />;
   }
 
   if (statPokemonQuery.isError) {
@@ -93,6 +102,62 @@ function PokemonDetail() {
             <Flex>
               <Box flex={'1'}>
                 <Progress mr={0} value={statPokemonQuery.data.stats[1].base_stat} w={'200px'} />
+              </Box>
+            </Flex>
+          </Flex>
+          <Flex
+            alignItems="center"
+            justifyContent={'space-between'}
+            paddingTop={6}
+            style={{ fontSize: '16px' }}>
+            <Flex>
+              <Text>Defense : </Text>
+            </Flex>
+            <Flex>
+              <Box flex={'1'}>
+                <Progress mr={0} value={statPokemonQuery.data.stats[2].base_stat} w={'200px'} />
+              </Box>
+            </Flex>
+          </Flex>
+          <Flex
+            alignItems="center"
+            justifyContent={'space-between'}
+            paddingTop={6}
+            style={{ fontSize: '16px' }}>
+            <Flex>
+              <Text>Special Attack : </Text>
+            </Flex>
+            <Flex>
+              <Box flex={'1'}>
+                <Progress mr={0} value={statPokemonQuery.data.stats[3].base_stat} w={'200px'} />
+              </Box>
+            </Flex>
+          </Flex>
+          <Flex
+            alignItems="center"
+            justifyContent={'space-between'}
+            paddingTop={6}
+            style={{ fontSize: '16px' }}>
+            <Flex>
+              <Text>Special Defense : </Text>
+            </Flex>
+            <Flex>
+              <Box flex={'1'}>
+                <Progress mr={0} value={statPokemonQuery.data.stats[4].base_stat} w={'200px'} />
+              </Box>
+            </Flex>
+          </Flex>
+          <Flex
+            alignItems="center"
+            justifyContent={'space-between'}
+            paddingTop={6}
+            style={{ fontSize: '16px' }}>
+            <Flex>
+              <Text>Speed : </Text>
+            </Flex>
+            <Flex>
+              <Box flex={'1'}>
+                <Progress mr={0} value={statPokemonQuery.data.stats[5].base_stat} w={'200px'} />
               </Box>
             </Flex>
           </Flex>

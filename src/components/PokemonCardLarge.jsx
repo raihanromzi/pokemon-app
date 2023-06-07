@@ -1,19 +1,34 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Text, Image, ButtonGroup, Button, Flex, Icon, Divider } from '@chakra-ui/react';
+import { Box, Text, Image, ButtonGroup, Button, Flex, Icon } from '@chakra-ui/react';
 import { FaHeart } from 'react-icons/fa';
+import { useDispatch } from 'react-redux';
+import { addFavorite } from '../redux/favoriteSlice';
 
-const PokemonCardLage = ({ name, id, description, fav, detail }) => {
+const PokemonCardLage = ({ name, id, description }) => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const [pokemon, setPokemon] = useState({
     name: '',
-    imageUrl: ''
+    imageUrl: '',
+    id: ''
   });
 
   useEffect(() => {
     let imageUrl = `${'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world'}/${id}.svg`;
     setPokemon({ name, imageUrl });
   }, [name, id]);
+
+  const handleFavoriteAdd = (pokemon) => {
+    dispatch(
+      addFavorite({
+        name: pokemon.name,
+        imageUrl: pokemon.imageUrl,
+        id: pokemon.id
+      })
+    );
+  };
 
   return (
     <Flex justifyItems="center" alignItems="center" justifyContent="center">
@@ -60,7 +75,12 @@ const PokemonCardLage = ({ name, id, description, fav, detail }) => {
                   transform: 'scale(1.50)',
                   transition: 'transform 0.15s ease-in'
                 }}>
-                <Icon as={FaHeart} color="white" boxSize={4} />
+                <Icon
+                  as={FaHeart}
+                  color="white"
+                  boxSize={4}
+                  onClick={() => handleFavoriteAdd(pokemon)}
+                />
               </Button>
               <Button
                 size="xs"

@@ -1,19 +1,27 @@
-import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Text, Image, ButtonGroup, Button, Flex, Icon, Divider } from '@chakra-ui/react';
 import { FaHeart } from 'react-icons/fa';
+import { useQuery } from 'react-query';
+import { useDispatch } from 'react-redux';
+import { removeFavorite } from '../redux/favoriteSlice';
 
-const PokemonCardLageFav = ({ name, id, description }) => {
+const PokemonCardLageFav = ({ name, id, description, imageUrl }) => {
   const navigate = useNavigate();
-  const [pokemon, setPokemon] = useState({
-    name: '',
-    imageUrl: ''
+  const dispatch = useDispatch();
+
+  const pokemonQuery = useQuery({
+    queryKey: ['pokemon', name],
+    queryFn: () =>
+      fetch(`https://pokeapi.co/api/v2/pokemon-species/${name}`).then((res) => res.json())
   });
 
-  useEffect(() => {
-    let imageUrl = `${'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world'}/${id}.svg`;
-    setPokemon({ name, imageUrl });
-  }, [name, id]);
+  if (pokemonQuery.isLoading) {
+    return <h1>Loading...</h1>;
+  }
+
+  if (pokemonQuery.isError) {
+    return <h1>Error</h1>;
+  }
 
   return (
     <Flex justifyItems="center" alignItems="center" justifyContent="center">
@@ -33,11 +41,21 @@ const PokemonCardLageFav = ({ name, id, description }) => {
         overflow="hidden"
         justifyContent="center"
         alignContent="center"
-        display="flex">
+        display="flex"
+        maxW={800}>
         <Box display="flex" alignItems="center">
-          <Image boxSize="90px" objectFit="cover" marginTop={-6} src={pokemon.imageUrl} />
+          <Image boxSize="90px" objectFit="cover" marginTop={-6} src={imageUrl} />
         </Box>
-        <Divider borderWidth={1} orientation="vertical" mx={4} borderColor="white" height={110} />
+        <Divider
+          borderWidth={1}
+          orientation="vertical"
+          mx={4}
+          borderColor="white"
+          justifyContent={'center'}
+          alignItems={'center'}
+          alignSelf={'center'}
+          height={190}
+        />
         <Box
           flex="1"
           display="flex"
@@ -49,7 +67,7 @@ const PokemonCardLageFav = ({ name, id, description }) => {
             {name}
           </Text>
           <Text textTransform={'capitalize'} textAlign={'start'}>
-            {description.flavor_text.replace(/\n/g, '')}
+            {pokemonQuery.data.flavor_text_entries[0].flavor_text.replace(/\n/g, ' ')}
           </Text>
           <Box display={'flex'} borderRadius="xl" alignSelf={'flex-end'} marginTop={2}>
             <ButtonGroup size="xs">
@@ -61,7 +79,14 @@ const PokemonCardLageFav = ({ name, id, description }) => {
                   transform: 'scale(1.50)',
                   transition: 'transform 0.15s ease-in'
                 }}>
-                <Icon as={FaHeart} color="white" boxSize={4} />
+                <Icon
+                  as={FaHeart}
+                  color="white"
+                  boxSize={4}
+                  onClick={() => {
+                    dispatch(removeFavorite({ id }));
+                  }}
+                />
               </Button>
               <Button
                 size="xs"
