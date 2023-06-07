@@ -1,16 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Box, Flex, IconButton, Text, Badge } from '@chakra-ui/react';
 import { MdCatchingPokemon } from 'react-icons/md';
 import { BsFillBookmarkFill } from 'react-icons/bs';
-import { useSelector } from 'react-redux';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../database/firebase';
 
 function Navbar() {
-  const favorite = useSelector((state) => {
-    return state.favorite;
-  });
+  const [favorites, setFavorites] = useState([]);
 
-  const favCount = favorite.favorites.length;
+  const getFavorite = async () => {
+    const querySnapshot = await getDocs(collection(db, 'favorites'));
+    const favoriteFromFirebase = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    setFavorites(favoriteFromFirebase);
+  };
+
+  useEffect(() => {
+    getFavorite();
+  }, []);
 
   return (
     <Flex
@@ -65,7 +75,7 @@ function Navbar() {
               Favorite
               <Box position="absolute" top="10px" right="70px" transform="translate(50%, -50%)">
                 <Badge colorScheme="red" variant="solid">
-                  {favCount}
+                  {favorites.length}
                 </Badge>
               </Box>
             </Text>

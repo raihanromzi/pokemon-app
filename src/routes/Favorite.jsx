@@ -1,31 +1,45 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from '../components/Navbar';
 import { Flex, Box, Heading } from '@chakra-ui/react';
-import { useSelector } from 'react-redux';
+// import { useSelector } from 'react-redux';
 import PokemonCardLageFav from '../components/PokemonCardLargeFav';
-import { useDispatch } from 'react-redux';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../database/firebase';
 
 const Favorite = () => {
-  const dispatch = useDispatch();
+  const [favorites, setFavorites] = useState();
 
-  const favorite = useSelector((state) => {
-    return state.favorite;
-  });
+  // const favorite = useSelector((state) => {
+  //   return state.favorite;
+  // });
 
-  // Helper function to filter unique objects based on a property value
-  const getUniqueByProperty = (arr, property) => {
-    const uniqueValues = new Set();
-    return arr.filter((obj) => {
-      if (!uniqueValues.has(obj[property])) {
-        uniqueValues.add(obj[property]);
-        return true;
-      }
-      return false;
-    });
+  const getFavorite = async () => {
+    const querySnapshot = await getDocs(collection(db, 'favorites'));
+    const favoriteFromFirebase = querySnapshot.docs.map((doc) => ({
+      firebaseId: doc.id,
+      ...doc.data()
+    }));
+    setFavorites(favoriteFromFirebase);
   };
 
+  useEffect(() => {
+    getFavorite();
+  }, []);
+
+  // Helper function to filter unique objects based on a property value
+  // const getUniqueByProperty = (arr, property) => {
+  //   const uniqueValues = new Set();
+  //   return arr.filter((obj) => {
+  //     if (!uniqueValues.has(obj[property])) {
+  //       uniqueValues.add(obj[property]);
+  //       return true;
+  //     }
+  //     return false;
+  //   });
+  // };
+
   // remove duplicate in favorite
-  const uniqueFavorite = getUniqueByProperty(favorite.favorites, 'name');
+  // const uniqueFavorite = getUniqueByProperty(favorite.favorites, 'name');
 
   // remove pokemon
 
@@ -37,14 +51,26 @@ const Favorite = () => {
           <Heading>Favoritos</Heading>
         </Box>
         <Flex flexDir={'column'} justifyContent={'center'} padding={10} my={-10} fontSize={'16px'}>
-          {uniqueFavorite.map((pokemon) => (
+          {/* If using Redux */}
+          {/* {uniqueFavorite.map((pokemon) => (
             <PokemonCardLageFav
               key={pokemon.name}
               name={pokemon.name}
               imageUrl={pokemon.imageUrl}
               id={pokemon.id}
             />
-          ))}
+          ))} */}
+          {favorites
+            ? favorites.map((pokemon) => (
+                <PokemonCardLageFav
+                  key={pokemon.name}
+                  name={pokemon.name}
+                  imageUrl={pokemon.imageUrl}
+                  id={pokemon.id}
+                  firestoreId={pokemon.firebaseId}
+                />
+              ))
+            : null}
         </Flex>
       </Flex>
     </>

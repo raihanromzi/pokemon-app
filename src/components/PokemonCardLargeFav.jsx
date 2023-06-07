@@ -4,13 +4,25 @@ import { FaHeart } from 'react-icons/fa';
 import { useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
 import { removeFavorite } from '../redux/favoriteSlice';
+import { useEffect, useState } from 'react';
 
-const PokemonCardLageFav = ({ name, id, description, imageUrl }) => {
+const PokemonCardLageFav = ({ name, id, description, imageUrl, firestoreId }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    let imageUrl = `${'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world'}/${id}.svg`;
+    setPokemon({ name, imageUrl });
+  }, [name, id]);
+
+  const [pokemon, setPokemon] = useState({
+    name: '',
+    imageUrl: '',
+    id: ''
+  });
+
   const pokemonQuery = useQuery({
-    queryKey: ['pokemon', name],
+    queryKey: ['pokemonImage', name],
     queryFn: () =>
       fetch(`https://pokeapi.co/api/v2/pokemon-species/${name}`).then((res) => res.json())
   });
@@ -44,7 +56,7 @@ const PokemonCardLageFav = ({ name, id, description, imageUrl }) => {
         display="flex"
         maxW={800}>
         <Box display="flex" alignItems="center">
-          <Image boxSize="90px" objectFit="cover" marginTop={-6} src={imageUrl} />
+          <Image boxSize="90px" objectFit="cover" marginTop={-6} src={pokemon.imageUrl} />
         </Box>
         <Divider
           borderWidth={1}
@@ -84,7 +96,7 @@ const PokemonCardLageFav = ({ name, id, description, imageUrl }) => {
                   color="white"
                   boxSize={4}
                   onClick={() => {
-                    dispatch(removeFavorite({ id }));
+                    dispatch(removeFavorite({ firestoreId }));
                   }}
                 />
               </Button>
